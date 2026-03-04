@@ -18,3 +18,12 @@ import "./commands";
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+afterEach(function () {
+	const testTitle = this.currentTest?.fullTitle() || "test";
+	const testState = this.currentTest?.state || "completed";
+
+	cy.screenshot(`${testTitle} -- ${testState}`, {
+		capture: "viewport",
+	});
+});
