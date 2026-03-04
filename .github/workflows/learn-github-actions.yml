@@ -1,0 +1,39 @@
+name: learn-github-actions
+run-name: ${{ github.actor }} runs ${{ github.workflow }} on ${{ github.ref }}
+on: [push]
+jobs:
+  build-nextjs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: npm
+      - name: Install dependencies
+        run: npm install
+      - name: Build the app
+        run: npm run build
+
+  test-with-e2e:
+    runs-on: ubuntu-latest
+    needs: build-nextjs
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: npm
+      - name: Install dependencies
+        run: npm install
+      - name: Run end-to-end tests
+        run: npm run test:e2e
+      - name: Upload Cypress screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore
